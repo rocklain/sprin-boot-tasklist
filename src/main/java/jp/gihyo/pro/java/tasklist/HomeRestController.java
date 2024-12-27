@@ -1,6 +1,5 @@
 package jp.gihyo.pro.java.tasklist;
 
-import org.springframework.scheduling.config.Task;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;

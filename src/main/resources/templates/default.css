@@ -2,3 +2,34 @@ body{
 margin:30px;
 color:#283655;
 }
+
+input{
+border: 1px solid;
+}
+.hidden{
+display: none;
+}
+
+.task_form{
+padding: 0px 10px 10px 10px;
+border: 1px solid #4D648D;
+}
+.task_form input[type="date"],select{
+width: 150px;
+}
+
+.tasklist table{
+width:100%;
+border:1px solid;
+border-collapse:collapse;
+}
+
+#updateDialog{
+display:none;
+background-color: #FFFFFF;
+border:2px double;
+width:500px;
+position:fixed;
+top:120px;
+z-index:9999;
+}
