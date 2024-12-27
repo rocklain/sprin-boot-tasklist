@@ -3,40 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>タスク管理アプリケーション</title>
-    <link rel="stylesheet" href="default.css">
+    <link rel="stylesheet" href="/css/default.css"> <!-- 修正: CSSの相対パスを明示 -->
 </head>
 <body>
-    <h1>タスク管理アプリケーション</h1>
-    <br>
-    <div class="task_form">
-        <h2>タスクの登録</h2>
-        <form action="/add">
-            <label>タスク</label>
-            <input name="task" type="text">
-            <label>期限</label>
-            <input name="deadline" type="date"/>
-            <input type="submit" value="登録"/>
-        </form>
-    </div>
+<h1>タスク管理アプリケーション</h1>
 <br>
-    <div class="tasklist">
-        <h2>現在のタスク一覧</h2>
-        <tr border="1" style="border-collapse:collapse;">
-            <thread>
-                <tr><th class="hidden">ID</th>
-                    <th>タスク</th>
-                    <th>期限</th>
-                    <th>状態</th>
-                </tr>
-            </thread>
-            <tbody>
-            <tr th:each="task : ${tasklist}">
-                <td class="hidden" th:text="${task.id}"></td>
-                <td th:text="${task.task}"></td>
-                <td width="100px" th:text="${task.deadline}"></td>
-                <td width="50px" th:text="${task.done}">?'完了':'未完了'</td>
-            </tbody>
+<div class="task_form">
+    <h2>タスクの登録</h2>
+    <form action="/add" method="get"> <!-- 修正: method属性を追加 -->
+        <label>タスク</label>
+        <input name="task" type="text" required> <!-- 修正: 必須入力を追加 -->
+        <label>期限</label>
+        <input name="deadline" type="date" required/> <!-- 修正: 必須入力を追加 -->
+        <input type="submit" value="登録"/>
+    </form>
+</div>
+<br>
+<div class="tasklist">
+    <h2>現在のタスク一覧</h2>
+    <table border="1" style="border-collapse:collapse;"> <!-- 修正: <table>タグを追加 -->
+        <thead>
+        <tr>
+            <th class="hidden">ID</th>
+            <th>タスク</th>
+            <th>期限</th>
+            <th>状態</th>
         </tr>
-    </div>
+        </thead>
+        <tbody>
+        <tr th:each="task : ${tasklist}">
+            <td class="hidden" th:text="${task.id}"></td>
+            <td th:text="${task.task}"></td>
+            <td width="100px" th:text="${task.deadline}"></td>
+            <td width="50px" th:text="${task.done} ? '完了' : '未完了'"></td> <!-- 修正: 三項演算子を修正 -->
+        </tr>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>
