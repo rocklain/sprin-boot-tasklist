@@ -3,25 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>タスク管理アプリケーション</title>
-    <link th:href="@{/home.css}" rel="stylesheet">
+    <link rel="stylesheet" href="/css/home.css">
 </head>
 <body>
 <h1>タスク管理アプリケーション</h1>
 <br>
 <div class="task_form">
     <h2>タスクの登録</h2>
-    <form action="/add" method="get"> <!-- 修正: method属性を追加 -->
+    <form action="/add" method="get">
         <label>タスク</label>
-        <input name="task" type="text" required> <!-- 修正: 必須入力を追加 -->
+        <input name="task" type="text" required>
         <label>期限</label>
-        <input name="deadline" type="date" required/> <!-- 修正: 必須入力を追加 -->
+        <input name="deadline" type="date" required/>
         <input type="submit" value="登録"/>
     </form>
 </div>
 <br>
 <div class="tasklist">
     <h2>現在のタスク一覧</h2>
-    <table border="1" style="border-collapse:collapse;"> <!-- 修正: <table>タグを追加 -->
+    <table>
         <thead>
         <tr>
             <th class="hidden">ID</th>
@@ -35,7 +35,7 @@
             <td class="hidden" th:text="${task.id}"></td>
             <td th:text="${task.task}"></td>
             <td width="100px" th:text="${task.deadline}"></td>
-            <td width="50px" th:text="${task.done} ? '完了' : '未完了'"></td> <!-- 修正: 三項演算子を修正 -->
+            <td width="50px" th:text="${task.done} ? '完了' : '未完了'"></td>
         </tr>
         </tbody>
     </table>
