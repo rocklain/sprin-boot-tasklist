@@ -13,29 +13,34 @@ import java.util.UUID;
 
 @Controller
 public class HomeController {
-    record TaskItem(String id,String task,String deadline,boolean done) {}
-    private List<TaskItem>taskItems =new ArrayList<>();
+    // タスクアイテムのデータ構造
+    record TaskItem(String id, String task, String deadline, boolean done) {}
+
+    // タスクアイテムを保持するリスト
+    private List<TaskItem> taskItems = new ArrayList<>();
 
     @RequestMapping(value = "/hello")
     public String hello(Model model) {
         model.addAttribute("time", LocalDateTime.now());  // 時刻をモデルに追加
         return "hello";  // Thymeleafテンプレート「hello.html」を返す
+    }
 
-
-        }
     @GetMapping("/list")
-    String listItems(Model model){
-        model.addAttribute("taskList",taskItems);
-        return "home";
+    public String listItems(Model model) {
+        // モデルにリストを追加
+        model.addAttribute("tasklist", taskItems); // HTMLテンプレートの名前に合わせる
+        return "home"; // `home.html` をレンダリング
     }
 
     @GetMapping("/add")
-    String addItem(@RequestParam("task")String task,
-                   @RequestParam("deadline")String deadline){
-        String id = UUID.randomUUID().toString().substring(0,8);
-        TaskItem item = new TaskItem(id,task,deadline,false);
+    public String addItem(@RequestParam("task") String task,
+                          @RequestParam("deadline") String deadline) {
+        // IDを生成し、新しいタスクを追加
+        String id = UUID.randomUUID().toString().substring(0, 8);
+        TaskItem item = new TaskItem(id, task, deadline, false);
         taskItems.add(item);
 
+        // リストページにリダイレクト
         return "redirect:/list";
     }
 }
