@@ -38,6 +38,6 @@ span.left {
         text-align: left;
     }
 
-#updateDialogue {
+div.updateDialog {
     display: none;
 }

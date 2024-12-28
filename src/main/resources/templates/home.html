@@ -39,16 +39,15 @@
             <td width="50px" th:text="${task.done} ? '完了' : '未完了'"></td>
 
             <td width="50px">
-                <button type="submit" id="update" onclick="
-                let row = this.parentElement.parentElement;
-                getElementById('update_id').value=row.cells[0].firstChild.data;
-                getElementById('update_task').value=
-                row.cells[1].firstChild.data;
-                getElementById('update_deadline').value=row.cells[2].firstChild.data;
-                getElementById('update_status').selectedIndex=(row.cells[3].firstChild.data=='完了')?1:0;
-                var dialogue = getElementById('updateDialogue');
-                dialogue.style.display='block';
-                ">更新</button>
+                <button type="submit" id="update_button" onclick="
+                    let row = this.parentElement.parentElement;
+                    getElementById('update_id').value = row.cells[0].firstChild.data;
+                    getElementById('update_task').value = row.cells[1].firstChild.data;
+                    getElementById('update_deadline').value = row.cells[2].firstChild.data;
+                    getElementById('update_status').selectedIndex = (row.cells[3].firstChild.data == '完了') ? 1 : 0;
+                    var dialogue = document.getElementById('updateDialog');
+                    dialogue.style.left = ((window.innerWidth - 500) / 2) + 'px';
+                    dialogue.style.display = 'block';">更新</button>
             </td>
 
             <td width="50px">
@@ -61,15 +60,15 @@
         </tbody>
     </table>
 </div>
-
-<div id="updateDialogue">
+<br>
+<div id="updateDialog">
     <div class = "task_form">
         <h2>タスクの更新</h2>
         <form action="/update">
             <input id="update_id" name="id" type="hidden" />
             <label>タスク</label>
             <input id="update_task" name="task" type="text" />
-            <labe>期限</labe>
+            <label>期限</label>
             <input id="update_deadline" name="deadline" type="date"/>
             <label>状態</label>
             <select id="update_status" name="done">
@@ -79,7 +78,7 @@
             <div>
                 <button type="submit">更新</button>
                 <button type="reset"
-                        onclick="getElementById('updateDialogue').style.display='none';">キャンセル</button>
+                        onclick="getElementById('updateDialog').style.display='none';">キャンセル</button>
             </div>
         </form>
     </div>
