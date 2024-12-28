@@ -21,13 +21,14 @@
 <br>
 <div class="tasklist">
     <h2>現在のタスク一覧</h2>
-    <table>
+    <table border = "1">
         <thead>
         <tr>
             <th class="hidden">ID</th>
-            <th><span class="left">タスク</span></th>
-            <th><span class="left">期限</span></th>
-            <th><span class="left">状態</span></th>
+            <th>タスク</th>
+            <th width="150px">期限</th>
+            <th width="100px">状態</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -36,9 +37,53 @@
             <td th:text="${task.task}"></td>
             <td width="100px" th:text="${task.deadline}"></td>
             <td width="50px" th:text="${task.done} ? '完了' : '未完了'"></td>
+
+            <td width="50px">
+                <button type="submit" id="update" onclick="
+                let row = this.parentElement.parentElement;
+                getElementById('update_id').value=row.cells[0].firstChild.data;
+                getElementById('update_task').value=
+                row.cells[1].firstChild.data;
+                getElementById('update_deadline').value=row.cells[2].firstChild.data;
+                getElementById('update_status').selectedIndex=(row.cells[3].firstChild.data=='完了')?1:0;
+                var dialogue = getElementById('updateDialogue');
+                dialogue.style.display='block';
+                ">更新</button>
+            </td>
+
+            <td width="50px">
+                <form action ="/delete">
+                    <button type="submit" id="delete_button">削除</button>
+                    <input type = "hidden" name ="id" th:values="${task.id}"/>
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>
 </div>
+
+<div id="updateDialogue">
+    <div class = "task_form">
+        <h2>タスクの更新</h2>
+        <form action="/update">
+            <input id="update_id" name="id" type="hidden" />
+            <label>タスク</label>
+            <input id="update_task" name="task" type="text" />
+            <labe>期限</labe>
+            <input id="update_deadline" name="deadline" type="date"/>
+            <label>状態</label>
+            <select id="update_status" name="done">
+                <option value="false">未完了</option>
+                <option value="true">完了</option>
+            </select>
+            <div>
+                <button type="submit">更新</button>
+                <button type="reset"
+                        onclick="getElementById('updateDialogue').style.display='none';">キャンセル</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 </body>
 </html>

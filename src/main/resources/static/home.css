@@ -37,3 +37,7 @@ z-index:9999;
 span.left {
         text-align: left;
     }
+
+#updateDialogue {
+    display: none;
+}
