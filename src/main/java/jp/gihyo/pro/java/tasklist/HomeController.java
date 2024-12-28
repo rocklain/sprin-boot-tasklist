@@ -36,6 +36,7 @@ public class HomeController {
     @GetMapping("/list")
     public String listItems(Model model) {
         // モデルにリストを追加
+        List<TaskItem> taskItems = dao.findAll();
         model.addAttribute("tasklist", taskItems); // HTMLテンプレートの名前に合わせる
         return "home"; // `home.html` をレンダリング
     }

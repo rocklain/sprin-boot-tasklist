@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 
-
+@Service
 public class TaskListDao {
     private final JdbcTemplate jdbcTemplate;
 
@@ -33,16 +33,21 @@ public class TaskListDao {
     public List<TaskItem> findAll(){
         String query = "SELECT * FROM tasklist";
 
-        List<Map<String,Object>> = result = jdbcTemplate.queryForList(query);
+        List<Map<String,Object>> result = jdbcTemplate.queryForList(query);
         List<TaskItem> taskItems = result.stream()
                 .map((Map<String,Object> row)->new TaskItem(
                         row.get("id").toString(),
                         row.get("task").toString(),
                         row.get("deadline").toString(),
-                        (Boolean)row.get("done"))
+                        (Boolean)row.get("done")))
                         .toList();
 
                 return taskItems;
+    }
+
+    public int delete(String id){
+        int number = jdbcTemplate.update("DELETE FROM tasklist WHERE id = ?");
+        return number;
     }
 }
 
