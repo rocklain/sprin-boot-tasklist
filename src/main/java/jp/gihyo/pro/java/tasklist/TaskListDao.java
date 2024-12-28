@@ -2,7 +2,6 @@ package jp.gihyo.pro.java.tasklist;
 
 import jp.gihyo.pro.java.tasklist.HomeController.TaskItem;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.aot.AutowiredArguments;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -12,51 +11,66 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
-
 @Service
 public class TaskListDao {
+    // データベースとやり取りするためのJdbcTemplate
     private final JdbcTemplate jdbcTemplate;
 
+    // コンストラクタでJdbcTemplateを依存性注入
     @Autowired
     TaskListDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    // タスクをデータベースに追加
     public void add(TaskItem taskItem) {
         SqlParameterSource param = new BeanPropertySqlParameterSource(taskItem);
+
+        // SimpleJdbcInsert を利用してデータをINSERT
         SimpleJdbcInsert insert =
                 new SimpleJdbcInsert(jdbcTemplate)
-                        .withTableName("tasklist");
-        insert.execute(param);
+                        .withTableName("tasklist"); // 対象のテーブル名を指定
+        insert.execute(param); // INSERT 実行
     }
 
-    public List<TaskItem> findAll(){
+    // データベースの全タスクを取得するメソッド
+    public List<TaskItem> findAll() {
+        // 全レコードを取得するクエリ
         String query = "SELECT * FROM tasklist";
 
-        List<Map<String,Object>> result = jdbcTemplate.queryForList(query);
+        // queryForList メソッドで結果を List<Map<String, Object>> 型で取得
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
+
+        // 取得したデータを TaskItem オブジェクトに変換し、List<TaskItem> に変換
         List<TaskItem> taskItems = result.stream()
-                .map((Map<String,Object> row)->new TaskItem(
-                        row.get("id").toString(),
-                        row.get("task").toString(),
-                        row.get("deadline").toString(),
-                        (Boolean)row.get("done")))
-                        .toList();
+                .map((Map<String, Object> row) -> new TaskItem(
+                        row.get("id").toString(),            // id 列を文字列に変換
+                        row.get("task").toString(),          // task 列を文字列に変換
+                        row.get("deadline").toString(),      // deadline 列を文字列に変換
+                        (Boolean) row.get("done")            // done 列を Boolean 型に変換
+                ))
+                .toList();
 
-                return taskItems;
+        return taskItems; // 結果を返す
     }
 
-    public int delete(String id){
-        int number = jdbcTemplate.update("DELETE FROM tasklist WHERE id = ?");
-        return number;
+    // 指定された ID のタスクを削除するメソッド
+    public int delete(String id) {
+        // DELETE 文を実行し、削除された行数を返す
+        int number = jdbcTemplate.update("DELETE FROM tasklist WHERE id = ?", id);
+        return number; // 削除された行数を返す
     }
 
+    // 指定されたタスクを更新するメソッド
     public int update(TaskItem taskItem) {
+        // UPDATE 文を実行し、更新された行数を返す
         int number = jdbcTemplate.update(
-                "UPDATE tasklist SET task = ? , deadline = ?, done = ? WHERE id = ?",
-                taskItem.task(),
-                taskItem.deadline(),
-                taskItem.done(),
-                taskItem.id());
-        return number;
+                "UPDATE tasklist SET task = ?, deadline = ?, done = ? WHERE id = ?",
+                taskItem.task(),      // 新しいタスク名
+                taskItem.deadline(),  // 新しい期限
+                taskItem.done(),      // 新しい完了状態
+                taskItem.id()         // 更新対象のタスク ID
+        );
+        return number; // 更新された行数を返す
     }
 }
