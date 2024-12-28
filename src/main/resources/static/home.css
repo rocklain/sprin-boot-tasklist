@@ -33,3 +33,7 @@ position:fixed;
 top:120px;
 z-index:9999;
 }
+
+span.left {
+        text-align: left;
+    }

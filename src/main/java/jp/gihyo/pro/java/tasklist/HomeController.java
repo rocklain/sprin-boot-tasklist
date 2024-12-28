@@ -1,5 +1,6 @@
 package jp.gihyo.pro.java.tasklist;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,13 @@ public class HomeController {
 
     // タスクアイテムを保持するリスト
     private List<TaskItem> taskItems = new ArrayList<>();
+
+    private final TaskListDao dao;
+
+    @Autowired
+    HomeController(TaskListDao dao){
+        this.dao=dao;
+    }
 
     @RequestMapping(value = "/hello")
     public String hello(Model model) {
@@ -38,7 +46,7 @@ public class HomeController {
         // IDを生成し、新しいタスクを追加
         String id = UUID.randomUUID().toString().substring(0, 8);
         TaskItem item = new TaskItem(id, task, deadline, false);
-        taskItems.add(item);
+        dao.add(item);
 
         // リストページにリダイレクト
         return "redirect:/list";
