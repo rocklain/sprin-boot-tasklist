@@ -41,3 +41,8 @@ span.left {
 div.updateDialog {
     display: none;
 }
+
+.small {
+    font-size: 10px;
+    color: lightgray;
+}

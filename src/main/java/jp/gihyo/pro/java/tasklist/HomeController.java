@@ -43,7 +43,15 @@ public class HomeController {
 
     @GetMapping("/add")
     public String addItem(@RequestParam("task") String task,
-                          @RequestParam("deadline") String deadline) {
+                          @RequestParam("deadline") String deadline
+                          ,Model model
+    ) {
+
+        if (LocalDateTime.parse(deadline + "T00:00").isBefore(LocalDateTime.now())) {
+            model.addAttribute("errorMessage", "期限に過去の日付を指定することはできません。");
+            return "error";
+        }
+
         // IDを生成し、新しいタスクを追加
         String id = UUID.randomUUID().toString().substring(0, 8);
         TaskItem item = new TaskItem(id, task, deadline, false);

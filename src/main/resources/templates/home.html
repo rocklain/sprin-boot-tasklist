@@ -10,13 +10,18 @@
 <br>
 <div class="task_form">
     <h2>タスクの登録</h2>
-    <form action="/add" method="get">
+    <form action="/add" method="get" onsubmit="return validateDeadline();">
         <label>タスク</label>
         <input name="task" type="text" required>
         <label>期限</label>
-        <input name="deadline" type="date" required/>
-        <input type="submit" value="登録"/>
+        <input name="deadline" id="deadline" type="date" required />
+        <input type="submit" value="登録" />
     </form>
+
+    <!-- エラーメッセージ表示用の要素 -->
+    <div id="errorMessage" style="color: red; display: none; margin-top: 10px;"></div>
+    <br>
+    <span class="small">※期限に過去の日付を登録することはできません。</span>
 </div>
 <br>
 <div class="tasklist">
@@ -83,5 +88,24 @@
         </form>
     </div>
 </div>
+<script>
+    function validateDeadline() {
+        const deadlineInput = document.getElementById("deadline");
+        const errorMessage = document.getElementById("errorMessage");
+        const deadlineDate = new Date(deadlineInput.value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // 今日の日付（時間を0にする）
+
+        // 過去の日付かどうかをチェック
+        if (deadlineDate < today) {
+            errorMessage.textContent = "期限に過去の日付を指定することはできません。";
+            errorMessage.style.display = "block"; // エラーメッセージを表示
+            return false; // フォームの送信を防ぐ
+        }
+
+        errorMessage.style.display = "none"; // エラーメッセージを非表示
+        return true; // フォームを送信する
+    }
+</script>
 </body>
 </html>
