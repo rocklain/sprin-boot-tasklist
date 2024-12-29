@@ -23,6 +23,7 @@
     <br>
     <span class="small">※期限に過去の日付を登録することはできません。</span>
 </div>
+
 <br>
 <div class="tasklist">
     <h2>現在のタスク一覧</h2>
@@ -56,11 +57,14 @@
             </td>
 
             <td width="50px">
-                <form action ="/delete">
-                    <button type="submit" id="delete_button">削除</button>
-                    <input type = "hidden" name ="id" th:value="${task.id}"/>
+                <form action="/delete" method="post" onsubmit="return confirmDelete();">
+                    <button type="submit">削除</button>
+                    <input type="hidden" name="id" th:value="${task.id}" />
                 </form>
+
+
             </td>
+
         </tr>
         </tbody>
     </table>
@@ -105,6 +109,11 @@
 
         errorMessage.style.display = "none"; // エラーメッセージを非表示
         return true; // フォームを送信する
+    }
+</script>
+<script>
+    function confirmDelete() {
+        return confirm("本当に削除しますか？");
     }
 </script>
 </body>
