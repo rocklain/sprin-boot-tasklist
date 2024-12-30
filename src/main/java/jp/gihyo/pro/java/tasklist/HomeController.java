@@ -76,7 +76,7 @@ public class HomeController {
     ) {
 
         if (LocalDateTime.parse(deadline + "T00:00").isBefore(LocalDateTime.now())) {
-            model.addAttribute("errorMessage", "期限に過去の日付を指定することはできません。");
+            model.addAttribute("errorMessage", "期限に過去の日付を登録することはできません。");
             return "error";
         }
 
@@ -107,14 +107,6 @@ public class HomeController {
     @GetMapping("/")
     public String redirectToLogin() {
         return "redirect:/login"; // 最初にアクセスしたときに /login にリダイレクト
-    }
-    @PostMapping("/logout")
-    public String logout(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate(); // セッションを無効化
-        }
-        return "redirect:/login"; // ログインページにリダイレクト
     }
 }
 

@@ -20,7 +20,7 @@
 
     <!-- エラーメッセージ表示用の要素 -->
     <div id="errorMessage" style="color: red; display: none; margin-top: 10px;"></div>
-    <span class="small">※期限に過去の日付を登録することはできません。</span>
+    <span class="big">※期限に過去の日付を登録することはできません。</span>
 </div>
 
 <br>
@@ -98,13 +98,12 @@
         </form>
     </div>
 </div>
-<div style="position: fixed; width: 100%; text-align: center;">
-    <form action="/logout" method="post">
-        <button type="submit" style="padding: 10px 20px; font-size: 16px;">ログアウト</button>
-    </form>
-</div>
-
-
+<!--<div style="position: fixed; width: 100%; text-align: center;">-->
+<!--    <form action="/logout" method="post" th:action="@{/logout}">-->
+<!--        <input type="hidden" name="_csrf" th:value="${_csrf.token}" />-->
+<!--        <button type="submit" style="padding: 10px 20px; font-size: 16px;">ログアウト</button>-->
+<!--    </form>-->
+<!--</div>-->
 <script>
     function validateDeadline() {
         const deadlineInput = document.getElementById("deadline");
@@ -115,7 +114,7 @@
 
         // 過去の日付かどうかをチェック
         if (deadlineDate < today) {
-            errorMessage.textContent = "期限に過去の日付を指定することはできません。";
+            errorMessage.textContent = "期限に過去の日付を登録することはできません。";
             errorMessage.style.display = "block"; // エラーメッセージを表示
             return false; // フォームの送信を防ぐ
         }
