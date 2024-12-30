@@ -35,12 +35,37 @@ public class HomeController {
     }
 
     @GetMapping("/list")
-    public String listItems(Model model) {
-        // モデルにリストを追加
-        List<TaskItem> taskItems = dao.findAll();
-        model.addAttribute("tasklist", taskItems); // HTMLテンプレートの名前に合わせる
-        return "home"; // `home.html` をレンダリング
+    public String listItems(@RequestParam(value = "sort", defaultValue = "") String sort,
+                            @RequestParam(value = "order", defaultValue = "asc") String order,
+                            Model model) {
+        // findAll() の結果を ArrayList に変換
+        List<TaskItem> taskItems = new ArrayList<>(dao.findAll());
+
+        if (!sort.isEmpty() && !order.isEmpty()) {
+            if (sort.equals("deadline")) {
+                taskItems.sort((a, b) -> {
+                    LocalDateTime deadlineA = (a.deadline() == null || a.deadline().isEmpty())
+                            ? LocalDateTime.MIN
+                            : LocalDateTime.parse(a.deadline() + "T00:00");
+                    LocalDateTime deadlineB = (b.deadline() == null || b.deadline().isEmpty())
+                            ? LocalDateTime.MIN
+                            : LocalDateTime.parse(b.deadline() + "T00:00");
+                    int compare = deadlineA.compareTo(deadlineB);
+                    return order.equals("asc") ? compare : -compare;
+                });
+            } else if (sort.equals("done")) {
+                taskItems.sort((a, b) -> {
+                    int compare = Boolean.compare(a.done(), b.done());
+                    return order.equals("asc") ? compare : -compare;
+                });
+            }
+        }
+
+        model.addAttribute("tasklist", taskItems);
+        return "home";
     }
+
+
 
     @GetMapping("/add")
     public String addItem(@RequestParam("task") String task,

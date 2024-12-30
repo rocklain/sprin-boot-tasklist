@@ -42,7 +42,7 @@ div.updateDialog {
     display: none;
 }
 
-.small {
-    font-size: 10px;
-    color: lightgray;
+/*span.small {
+    font-size: 12px;
+    color: #696969;
 }

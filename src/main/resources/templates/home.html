@@ -20,7 +20,6 @@
 
     <!-- エラーメッセージ表示用の要素 -->
     <div id="errorMessage" style="color: red; display: none; margin-top: 10px;"></div>
-    <br>
     <span class="small">※期限に過去の日付を登録することはできません。</span>
 </div>
 
@@ -32,8 +31,15 @@
         <tr>
             <th class="hidden">ID</th>
             <th>タスク</th>
-            <th width="150px">期限</th>
-            <th width="100px">状態</th>
+            <th width="150px">期限
+                <a th:href="@{/list(sort='deadline', order='asc')}">▲</a>
+                <a th:href="@{/list(sort='deadline', order='desc')}">▼</a>
+            </th>
+            <th width="100px">状態
+                <a th:href="@{/list(sort='done', order='asc')}">▲</a>
+                <a th:href="@{/list(sort='done', order='desc')}">▼</a>
+            </th>
+
             <th></th>
         </tr>
         </thead>
@@ -114,6 +120,34 @@
 <script>
     function confirmDelete() {
         return confirm("本当に削除しますか？");
+    }
+</script>
+<script>
+    function sortTable(column, order) {
+        const table = document.querySelector(".tasklist table tbody");
+        const rows = Array.from(table.querySelectorAll("tr"));
+
+        rows.sort((rowA, rowB) => {
+            const cellA = rowA.querySelector(`[th:text*="${column}"]`).textContent.trim();
+            const cellB = rowB.querySelector(`[th:text*="${column}"]`).textContent.trim();
+
+            let valueA = column === 'done' ? (cellA === '完了' ? 1 : 0) : cellA;
+            let valueB = column === 'done' ? (cellB === '完了' ? 1 : 0) : cellB;
+
+            if (column === 'deadline') {
+                valueA = new Date(valueA);
+                valueB = new Date(valueB);
+            }
+
+            if (order === 'asc') {
+                return valueA > valueB ? 1 : -1;
+            } else {
+                return valueA < valueB ? 1 : -1;
+            }
+        });
+
+        // ソート後の行を再描画
+        rows.forEach(row => table.appendChild(row));
     }
 </script>
 </body>
