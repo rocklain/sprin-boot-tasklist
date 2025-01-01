@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,7 +19,8 @@ import java.util.UUID;
 @Controller
 public class HomeController {
     // タスクアイテムのデータ構造
-    record TaskItem(String id, String task, String deadline, boolean done) {}
+    record TaskItem(String id, String task, LocalDate deadline, boolean done) {}
+
 
     // タスクアイテムを保持するリスト
     private List<TaskItem> taskItems = new ArrayList<>();
@@ -46,12 +48,12 @@ public class HomeController {
         if (!sort.isEmpty() && !order.isEmpty()) {
             if (sort.equals("deadline")) {
                 taskItems.sort((a, b) -> {
-                    LocalDateTime deadlineA = (a.deadline() == null || a.deadline().isEmpty())
+                    LocalDateTime deadlineA = (a.deadline() == null)
                             ? LocalDateTime.MIN
-                            : LocalDateTime.parse(a.deadline() + "T00:00");
-                    LocalDateTime deadlineB = (b.deadline() == null || b.deadline().isEmpty())
+                            : a.deadline().atStartOfDay();
+                    LocalDateTime deadlineB = (b.deadline() == null)
                             ? LocalDateTime.MIN
-                            : LocalDateTime.parse(b.deadline() + "T00:00");
+                            : b.deadline().atStartOfDay();
                     int compare = deadlineA.compareTo(deadlineB);
                     return order.equals("asc") ? compare : -compare;
                 });
@@ -71,23 +73,31 @@ public class HomeController {
 
     @GetMapping("/add")
     public String addItem(@RequestParam("task") String task,
-                          @RequestParam("deadline") String deadline
-                          ,Model model
-    ) {
+                          @RequestParam("deadline") String deadline,
+                          Model model) {
 
-        if (LocalDateTime.parse(deadline + "T00:00").isBefore(LocalDateTime.now())) {
+        LocalDate parsedDeadline;
+        try {
+            parsedDeadline = LocalDate.parse(deadline); // String を LocalDate に変換
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "期限の日付形式が不正です。正しい形式で入力してください (例: 2025-01-01)。");
+            return "error";
+        }
+
+        if (parsedDeadline.isBefore(LocalDate.now())) {
             model.addAttribute("errorMessage", "期限に過去の日付を登録することはできません。");
             return "error";
         }
 
         // IDを生成し、新しいタスクを追加
         String id = UUID.randomUUID().toString().substring(0, 8);
-        TaskItem item = new TaskItem(id, task, deadline, false);
+        TaskItem item = new TaskItem(id, task, parsedDeadline, false); // LocalDate 型を渡す
         dao.add(item);
 
         // リストページにリダイレクト
         return "redirect:/list";
     }
+
 
     @PostMapping("/delete")
     String deleteItem(@RequestParam("id") String id) {
@@ -96,17 +106,22 @@ public class HomeController {
     }
 
     @GetMapping("/update")
-    String updateItem(@RequestParam("id") String id,
-                      @RequestParam("task") String task,
-                      @RequestParam("deadline")String deadline,
-                      @RequestParam("done") boolean done) {
-        TaskItem taskItem = new TaskItem(id,task,deadline,done);
+    public String updateItem(@RequestParam("id") String id,
+                             @RequestParam("task") String task,
+                             @RequestParam("deadline") String deadline,
+                             @RequestParam("done") boolean done) {
+
+        LocalDate parsedDeadline;
+        try {
+            parsedDeadline = LocalDate.parse(deadline); // String を LocalDate に変換
+        } catch (Exception e) {
+            // 必要に応じてエラーハンドリングを追加
+            return "error";
+        }
+
+        TaskItem taskItem = new TaskItem(id, task, parsedDeadline, done); // LocalDate 型を渡す
         dao.update(taskItem);
         return "redirect:/list";
-    }
-    @GetMapping("/")
-    public String redirectToLogin() {
-        return "redirect:/login"; // 最初にアクセスしたときに /login にリダイレクト
     }
 }
 

@@ -8,6 +8,8 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -35,23 +37,23 @@ public class TaskListDao {
 
     // データベースの全タスクを取得するメソッド
     public List<TaskItem> findAll() {
-        // 全レコードを取得するクエリ
         String query = "SELECT * FROM tasklist";
 
-        // queryForList メソッドで結果を List<Map<String, Object>> 型で取得
         List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
 
-        // 取得したデータを TaskItem オブジェクトに変換し、List<TaskItem> に変換
+        // DateTimeFormatter（必要ならカスタマイズ）
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
         List<TaskItem> taskItems = result.stream()
-                .map((Map<String, Object> row) -> new TaskItem(
-                        row.get("id").toString(),            // id 列を文字列に変換
-                        row.get("task").toString(),          // task 列を文字列に変換
-                        row.get("deadline").toString(),      // deadline 列を文字列に変換
-                        (Boolean) row.get("done")            // done 列を Boolean 型に変換
+                .map(row -> new TaskItem(
+                        row.get("id").toString(),                    // id 列を文字列に変換
+                        row.get("task").toString(),                  // task 列を文字列に変換
+                        LocalDate.parse(row.get("deadline").toString(), formatter), // deadline を LocalDate に変換
+                        (Boolean) row.get("done")                    // done 列を Boolean 型に変換
                 ))
                 .toList();
 
-        return taskItems; // 結果を返す
+        return taskItems;
     }
 
     // 指定された ID のタスクを削除するメソッド

@@ -26,7 +26,7 @@
 <br>
 <div class="tasklist">
     <h2>現在のタスク一覧</h2>
-    <table border = "1">
+    <table border="1">
         <thead>
         <tr>
             <th class="hidden">ID</th>
@@ -35,11 +35,11 @@
                 <a th:href="@{/list(sort='deadline', order='asc')}">▲</a>
                 <a th:href="@{/list(sort='deadline', order='desc')}">▼</a>
             </th>
+            <th width="150px">期限までの日数</th>
             <th width="100px">状態
                 <a th:href="@{/list(sort='done', order='asc')}">▲</a>
                 <a th:href="@{/list(sort='done', order='desc')}">▼</a>
             </th>
-
             <th></th>
         </tr>
         </thead>
@@ -47,114 +47,48 @@
         <tr th:each="task : ${tasklist}">
             <td class="hidden" th:text="${task.id}"></td>
             <td th:text="${task.task}"></td>
-            <td width="100px" th:text="${task.deadline}"></td>
-            <td width="50px" th:text="${task.done} ? '完了' : '未完了'"></td>
-
-            <td width="50px">
-                <button type="submit" id="update_button" onclick="
-                    let row = this.parentElement.parentElement;
-                    getElementById('update_id').value = row.cells[0].firstChild.data;
-                    getElementById('update_task').value = row.cells[1].firstChild.data;
-                    getElementById('update_deadline').value = row.cells[2].firstChild.data;
-                    getElementById('update_status').selectedIndex = (row.cells[3].firstChild.data == '完了') ? 1 : 0;
-                    var dialogue = document.getElementById('updateDialog');
-                    dialogue.style.left = ((window.innerWidth - 500) / 2) + 'px';
-                    dialogue.style.display = 'block';">更新</button>
+            <td width="150px">
+                <span th:text="${task.deadline}"></span>
             </td>
-
+            <td width="150px" th:classappend="${task.deadline < T(java.time.LocalDate).now()} ? 'overdue' : ''">
+                <span th:if="${task.deadline >= T(java.time.LocalDate).now()}"
+                      th:text="${T(java.time.Period).between(T(java.time.LocalDate).now(), task.deadline).days} + ' 日'"></span>
+                <span th:if="${task.deadline < T(java.time.LocalDate).now()}" style="color: red;">※期限を過ぎています</span>
+            </td>
+            <td width="50px" th:text="${task.done} ? '完了' : '未完了'"></td>
             <td width="50px">
                 <form action="/delete" method="post" onsubmit="return confirmDelete();">
                     <button type="submit">削除</button>
                     <input type="hidden" name="id" th:value="${task.id}" />
                 </form>
-
-
             </td>
-
         </tr>
         </tbody>
     </table>
 </div>
 <br>
-<div id="updateDialog">
-    <div class = "task_form">
-        <h2>タスクの更新</h2>
-        <form action="/update">
-            <input id="update_id" name="id" type="hidden" />
-            <label>タスク</label>
-            <input id="update_task" name="task" type="text" />
-            <label>期限</label>
-            <input id="update_deadline" name="deadline" type="date"/>
-            <label>状態</label>
-            <select id="update_status" name="done">
-                <option value="false">未完了</option>
-                <option value="true">完了</option>
-            </select>
-            <div>
-                <button type="submit">更新</button>
-                <button type="reset"
-                        onclick="getElementById('updateDialog').style.display='none';">キャンセル</button>
-            </div>
-        </form>
-    </div>
-</div>
-<!--<div style="position: fixed; width: 100%; text-align: center;">-->
-<!--    <form action="/logout" method="post" th:action="@{/logout}">-->
-<!--        <input type="hidden" name="_csrf" th:value="${_csrf.token}" />-->
-<!--        <button type="submit" style="padding: 10px 20px; font-size: 16px;">ログアウト</button>-->
-<!--    </form>-->
-<!--</div>-->
 <script>
-    function validateDeadline() {
-        const deadlineInput = document.getElementById("deadline");
-        const errorMessage = document.getElementById("errorMessage");
-        const deadlineDate = new Date(deadlineInput.value);
+    document.addEventListener("DOMContentLoaded", () => {
         const today = new Date();
-        today.setHours(0, 0, 0, 0); // 今日の日付（時間を0にする）
+        const rows = document.querySelectorAll(".tasklist tbody tr");
+        rows.forEach(row => {
+            const deadlineCell = row.cells[2];
+            const daysCell = row.cells[3];
+            const deadlineText = deadlineCell.textContent.trim();
+            const deadlineDate = new Date(deadlineText);
 
-        // 過去の日付かどうかをチェック
-        if (deadlineDate < today) {
-            errorMessage.textContent = "期限に過去の日付を登録することはできません。";
-            errorMessage.style.display = "block"; // エラーメッセージを表示
-            return false; // フォームの送信を防ぐ
-        }
+            if (!isNaN(deadlineDate)) {
+                const daysLeft = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
 
-        errorMessage.style.display = "none"; // エラーメッセージを非表示
-        return true; // フォームを送信する
-    }
-</script>
-<script>
-    function confirmDelete() {
-        return confirm("本当に削除しますか？");
-    }
-</script>
-<script>
-    function sortTable(column, order) {
-        const table = document.querySelector(".tasklist table tbody");
-        const rows = Array.from(table.querySelectorAll("tr"));
-
-        rows.sort((rowA, rowB) => {
-            const cellA = rowA.querySelector(`[th:text*="${column}"]`).textContent.trim();
-            const cellB = rowB.querySelector(`[th:text*="${column}"]`).textContent.trim();
-
-            let valueA = column === 'done' ? (cellA === '完了' ? 1 : 0) : cellA;
-            let valueB = column === 'done' ? (cellB === '完了' ? 1 : 0) : cellB;
-
-            if (column === 'deadline') {
-                valueA = new Date(valueA);
-                valueB = new Date(valueB);
-            }
-
-            if (order === 'asc') {
-                return valueA > valueB ? 1 : -1;
-            } else {
-                return valueA < valueB ? 1 : -1;
+                if (daysLeft < 0) {
+                    daysCell.style.color = "red";
+                    daysCell.textContent = "※期限を過ぎています";
+                } else {
+                    daysCell.textContent = `${daysLeft} 日`;
+                }
             }
         });
-
-        // ソート後の行を再描画
-        rows.forEach(row => table.appendChild(row));
-    }
+    });
 </script>
 </body>
 </html>
