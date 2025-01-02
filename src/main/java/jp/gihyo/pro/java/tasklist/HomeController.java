@@ -105,7 +105,7 @@ public class HomeController {
         return "redirect:/list";
     }
 
-    @GetMapping("/update")
+    @PostMapping("/update")
     public String updateItem(@RequestParam("id") String id,
                              @RequestParam("task") String task,
                              @RequestParam("deadline") String deadline,

@@ -64,11 +64,17 @@
             <td width="50px">
                 <button type="submit" id="update_button" onclick="
                 let row = this.parentElement.parentElement;
+
                 getElementById('update_id').value=row.cells[0].firstChild.data;
-                getElementById('update_task').value=
-                    row.cells[1].firstChild.data;
-                getElementById('update_deadline').value=row.cells[2].firstChild.data;
-                getElementById('update_status').selectedIndex=(row.cells[3].firstChild.data=='完了')?1:0
+                getElementById('update_task').value=row.cells[1].firstChild.data;
+
+                 let deadlineCell = row.cells[2].textContent.trim();
+                 let deadlineDate = new Date(deadlineCell);
+                 let formattedDeadline = deadlineDate.toISOString().split('T')[0];
+                 getElementById('update_deadline').value = formattedDeadline;
+
+                 getElementById('update_status').selectedIndex=(row.cells[4].firstChild.data=='完了')?1:0
+
                 var dialog = getElementById('updateDialog');
                 dialog.style.left=((window.innerWidth-500)/2)+'px';
                 dialog.style.display='block';
