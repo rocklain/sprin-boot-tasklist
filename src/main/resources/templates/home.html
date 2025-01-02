@@ -102,12 +102,13 @@
             <label>タスク</label>
             <input id="update_task" name="task" type="text" />
             <label>期限</label>
-            <input id="update_deadline" name="deadline" type="date" />
+            <input id="update_deadline" name="deadline" type="date" /><br/>
             <label>状態</label>
             <select id="update_status" name="done">
                 <option value="false">未完了</option>
                 <option value="true">完了</option>
             </select>
+            <p>※期限に過去の日付を登録することはできません。</p>
             <div>
                 <button type="submit">更新</button>
                 <button type="reset"
@@ -117,9 +118,6 @@
     </div>
 </div>
 <br>
-
-
-
 <script>
     function confirmDelete() {
         return confirm("本当に削除しますか？");
@@ -142,60 +140,8 @@
         // ポップアップを非表示
         document.getElementById("updateDialog").style.display = "none";
     }
-</script>
-<script>
-    function showUpdateDialog(id, task, deadline, done) {
-    document.getElementById("update_id").value = id;        // IDをセット
-    document.getElementById("update_task").value = task;    // タスク名をセット
-    document.getElementById("update_deadline").value = deadline; // 期限をセット
-    document.getElementById("update_status").value = done;  // 状態をセット
-    document.getElementById("updateDialog").style.display = "block"; // ポップアップを表示
-}
-
-function hideUpdateDialog() {
-    document.getElementById("updateDialog").style.display = "none"; // ポップアップを非表示
-}
 </script>
 <br>
-
-
-
-<script>
-    function confirmDelete() {
-        return confirm("本当に削除しますか？");
-    }
-</script>
-<script>
-    function showUpdateDialog(id, task, deadline, done) {
-        // ポップアップを表示
-        const dialog = document.getElementById("updateDialog");
-        dialog.style.display = "block";
-
-        // フォームに値をセット
-        document.getElementById("update_id").value = id;
-        document.getElementById("update_task").value = task;
-        document.getElementById("update_deadline").value = deadline;
-        document.getElementById("update_status").value = done === 'true' ? "true" : "false";
-    }
-
-    function hideUpdateDialog() {
-        // ポップアップを非表示
-        document.getElementById("updateDialog").style.display = "none";
-    }
-</script>
-<script>
-    function showUpdateDialog(id, task, deadline, done) {
-    document.getElementById("update_id").value = id;        // IDをセット
-    document.getElementById("update_task").value = task;    // タスク名をセット
-    document.getElementById("update_deadline").value = deadline; // 期限をセット
-    document.getElementById("update_status").value = done;  // 状態をセット
-    document.getElementById("updateDialog").style.display = "block"; // ポップアップを表示
-}
-
-function hideUpdateDialog() {
-    document.getElementById("updateDialog").style.display = "none"; // ポップアップを非表示
-}
-</script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const today = new Date();
