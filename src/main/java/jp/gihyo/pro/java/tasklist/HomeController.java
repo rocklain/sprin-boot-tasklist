@@ -71,7 +71,7 @@ public class HomeController {
 
 
 
-    @GetMapping("/add")
+    @PostMapping("/add")
     public String addItem(@RequestParam("task") String task,
                           @RequestParam("deadline") String deadline,
                           Model model) {
