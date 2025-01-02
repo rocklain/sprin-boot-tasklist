@@ -9,11 +9,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class LoginController {
 
-    @GetMapping("/login")
-    public String showLoginPage() {
-        return "login"; // ログインページの表示
+    // ルートパスにアクセスした際に /login にリダイレクト
+    @GetMapping("/")
+    public String redirectToLogin() {
+        return "redirect:/login"; // 修正: スラッシュを追加
     }
 
+    // ログインページの表示
+    @GetMapping("/login")
+    public String showLoginPage() {
+        return "login"; // "login.html" を表示
+    }
+
+    // ログイン処理
     @PostMapping("/login")
     public String handleLogin(
             @RequestParam String username,
